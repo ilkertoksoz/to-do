@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -25,41 +24,40 @@ import com.hepsiemlak.todo.service.impl.TodoServiceImpl;
 
 @RunWith(MockitoJUnitRunner.class)
 @PowerMockIgnore({ "javax.management.*", "javax.script.*" })
-public class ToDoServiceImplTest {
+public class TodoServiceImplTest {
 
-    @InjectMocks
-    private TodoServiceImpl todoServiceImpl;
+	@InjectMocks
+	private TodoServiceImpl todoServiceImpl;
 
-    @Mock
-    private TodoRepository todoRepository;
+	@Mock
+	private TodoRepository todoRepository;
 
-    @Mock
-    private ModelMapper modelMapper;
+	@Mock
+	private ModelMapper modelMapper;
 
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
+	@Before
+	public void setUp() {
 
-        when(modelMapper.map(any(), eq(TodoDto.class))).thenReturn(new TodoDto());
-    }
+		List<Todo> todos = new ArrayList<>();
+		Todo todo = new Todo();
+		todo.setCompleted(true);
+		todo.setId("1");
+		todo.setTodoTitle("title");
+		todos.add(todo);
+		
+		when(modelMapper.map(any(), eq(TodoDto.class))).thenReturn(new TodoDto());
 
-    @Test
-    public void testFindAllTodos() {
-    	
-        List<Todo> todos = new ArrayList<>();
-        Todo todo = new Todo();
-        todo.setCompleted(true);
-        todo.setId("1");
-        todo.setTodoTitle("title");
-        todos.add(todo);
+		when(todoRepository.findAllByTodos()).thenReturn(todos);
+	}
 
-        when(todoRepository.findAllByTodos()).thenReturn(todos);
+	@Test
+	public void testFindAllTodos() {
 
-        List<TodoDto> todoDtos = todoServiceImpl.findAllTodos();
+		List<TodoDto> todoDtos = todoServiceImpl.findAllTodos();
 
-        assertEquals(1, todoDtos.size());
-        assertEquals("1", todoDtos.get(0).getId());
-        assertEquals("title", todoDtos.get(0).getTodoTitle());
-        assertEquals(true, todoDtos.get(0).isCompleted());
-    }
+		assertEquals(1, todoDtos.size());
+		assertEquals("1", todoDtos.get(0).getId());
+		assertEquals("title", todoDtos.get(0).getTodoTitle());
+		assertEquals(true, todoDtos.get(0).isCompleted());
+	}
 }
