@@ -12,6 +12,7 @@ import com.hepsiemlak.todo.dto.TodoDto;
 import com.hepsiemlak.todo.entity.Todo;
 import com.hepsiemlak.todo.exception.AllToDoNotFoundException;
 import com.hepsiemlak.todo.exception.CompletedTodoException;
+import com.hepsiemlak.todo.exception.ToDoAlreadyExistException;
 import com.hepsiemlak.todo.exception.TodoNotFoundException;
 import com.hepsiemlak.todo.repository.TodoRepository;
 import com.hepsiemlak.todo.service.TodoService;
@@ -60,7 +61,8 @@ public class TodoServiceImpl implements TodoService {
 					"[TodoServiceImpl] (createTodo) To Do already exists with the same content. ID: {}, taskTitle: {}, isCompleted: {}",
 					existingTodo.getId(), existingTodo.getTodoTitle(), existingTodo.isCompleted());
 
-			return modelMapper.map(existingTodo, TodoDto.class);
+			throw new ToDoAlreadyExistException();
+
 		}
 
 		Todo todo = modelMapper.map(todoDto, Todo.class);
