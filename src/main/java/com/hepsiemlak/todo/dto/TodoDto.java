@@ -20,5 +20,8 @@ public class TodoDto {
 
 	@ApiModelProperty(required = true, value = "isCompleted")
 	private boolean isCompleted;
+	
+	@ApiModelProperty(required = true, value = "isDeleted")
+	private boolean isDeleted;
 
 }

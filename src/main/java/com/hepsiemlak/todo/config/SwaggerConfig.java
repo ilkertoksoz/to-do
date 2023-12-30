@@ -10,6 +10,8 @@ import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
+import springfox.documentation.service.Tag;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
@@ -17,10 +19,16 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
+	
+	public static final String HEPSI_EMLAK_TO_DO_SERVICE_TAG = "To Do Service";
 
     ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("To Do API Reference")
+                .license("Hepsi Emlak")
+                .licenseUrl("https://www.hepsiemlak.com")
+                .termsOfServiceUrl("")
+                .contact(new Contact("Hepsi Emlak", "https://www.hepsiemlak.com/", "bilgi@hepsiemlak.com"))
                 .version("1.0.0")
                 .build();
     }
@@ -35,6 +43,7 @@ public class SwaggerConfig {
                 .pathMapping("/")
                 .useDefaultResponseMessages(false)
                 .directModelSubstitute(LocalDate.class, String.class)
-                .genericModelSubstitutes(ResponseEntity.class);
+                .genericModelSubstitutes(ResponseEntity.class)
+        		.tags(new Tag(HEPSI_EMLAK_TO_DO_SERVICE_TAG, "TO_DO Service API"));
     }
 }

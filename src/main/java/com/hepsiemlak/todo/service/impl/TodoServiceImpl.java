@@ -89,16 +89,24 @@ public class TodoServiceImpl implements TodoService {
 
 	@Override
 	public Boolean deleteTodo(String id) {
-
 		return todoRepository.findById(id).map(task -> {
 
-			task.setDeleted(true);
+			if (!task.isDeleted()) {
 
-			todoRepository.save(task);
+				task.setDeleted(true);
 
-			logger.info("[TodoServiceImpl] (deleteTodo) To with ID {} marked as deleted", id);
+				todoRepository.save(task);
 
-			return true;
+				logger.info("[TodoServiceImpl] (deleteTodo) Todo with ID {} has deleted", id);
+
+				return true;
+
+			} else {
+
+				logger.info("[TodoServiceImpl] (deleteTodo) Todo with ID {} is already deleted", id);
+
+				return false;
+			}
 
 		}).orElseThrow(() -> new TodoNotFoundException(id));
 	}
