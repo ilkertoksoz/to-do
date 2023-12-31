@@ -65,6 +65,7 @@ public interface ToDoController {
 	@PostMapping
 	ResponseEntity<TodoDto> createTodo(@RequestBody TodoDto todoDto);
 
+//TODO: swagger annotation and logic documentation will be addedd
 	@GetMapping("/{id}")
 	public ResponseEntity<TodoDto> getTodoById(@PathVariable String id);
 
