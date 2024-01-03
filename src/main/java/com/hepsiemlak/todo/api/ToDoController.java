@@ -23,56 +23,56 @@ import io.swagger.annotations.ApiResponses;
 @Api(value = ApiPaths.ToDoCtrl.CTRL, tags = {SwaggerConfig.HEPSI_EMLAK_TO_DO_SERVICE_TAG})
 public interface ToDoController {
 
-	 @ApiOperation(
-			 value = "Get all Todos", 
-			 nickname = "getAllTodos",
-			 notes = "Returns a list of all To do's")
-	 
-	 @ApiResponses({
-         @ApiResponse(code = 200, message = "Successfully retrieved To do's", response = TodoDto.class),
-         @ApiResponse(code = 400, message = "Bad Request", response = SwaggerErrorResponseCode.class),
-         @ApiResponse(code = 401, message = "Unauthorized", response = SwaggerErrorResponseCode.class),
-         @ApiResponse(code = 403, message = "Forbidden", response = SwaggerErrorResponseCode.class),
-         @ApiResponse(code = 404, message = "No To do's has been found", response = SwaggerErrorResponseCode.class),
-         @ApiResponse(code = 405, message = "Method Not allowed", response = SwaggerErrorResponseCode.class),
-         @ApiResponse(code = 409, message = "Conflict", response = SwaggerErrorResponseCode.class),
-         @ApiResponse(code = 500, message = "Internal Server Error", response = SwaggerErrorResponseCode.class),
-         @ApiResponse(code = 503, message = "Can not reached remote URL", response = SwaggerErrorResponseCode.class)
- })
-	@GetMapping
-	ResponseEntity<List<TodoDto>> findAllTodos();
+    @ApiOperation(
+            value = "Get all Todos",
+            nickname = "getAllTodos",
+            notes = "Returns a list of all To do's")
 
-	 @ApiOperation(
-			 value = "Create a new Todo", 
-			 nickname = "createNewTodo",
-			 notes = "Creates a new Todo item",
-			 response = TodoDto.class)
-	 
-	 @ApiResponses({
-	     @ApiResponse(code = 201, message = "To do created successfully", response = TodoDto.class),
-	     @ApiResponse(code = 400, message = "Bad Request", response = SwaggerErrorResponseCode.class),
-         @ApiResponse(code = 401, message = "Unauthorized", response = SwaggerErrorResponseCode.class),
-         @ApiResponse(code = 403, message = "Forbidden", response = SwaggerErrorResponseCode.class),
-         @ApiResponse(code = 404, message = "No To do's has been found", response = SwaggerErrorResponseCode.class),
-         @ApiResponse(code = 405, message = "Method Not allowed", response = SwaggerErrorResponseCode.class),
-         @ApiResponse(code = 409, message = "Conflict", response = SwaggerErrorResponseCode.class),
-         @ApiResponse(code = 500, message = "Internal Server Error", response = SwaggerErrorResponseCode.class),
-         @ApiResponse(code = 503, message = "Can not reached remote URL", response = SwaggerErrorResponseCode.class)
-	 }) 
-	 
-	 
-	@ApiParam(value = "To do details to be created", required = true) 
-	@PostMapping
-	ResponseEntity<TodoDto> createTodo(@RequestBody TodoDto todoDto);
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Successfully retrieved To do's", response = TodoDto.class),
+            @ApiResponse(code = 400, message = "Bad Request", response = SwaggerErrorResponseCode.class),
+            @ApiResponse(code = 401, message = "Unauthorized", response = SwaggerErrorResponseCode.class),
+            @ApiResponse(code = 403, message = "Forbidden", response = SwaggerErrorResponseCode.class),
+            @ApiResponse(code = 404, message = "No To do's has been found", response = SwaggerErrorResponseCode.class),
+            @ApiResponse(code = 405, message = "Method Not allowed", response = SwaggerErrorResponseCode.class),
+            @ApiResponse(code = 409, message = "Conflict", response = SwaggerErrorResponseCode.class),
+            @ApiResponse(code = 500, message = "Internal Server Error", response = SwaggerErrorResponseCode.class),
+            @ApiResponse(code = 503, message = "Can not reached remote URL", response = SwaggerErrorResponseCode.class)
+    })
+    @GetMapping
+    ResponseEntity<List<TodoDto>> findAllTodos();
 
-//TODO: swagger annotation and logic documentation will be addedd
-	@GetMapping("/{id}")
-	public ResponseEntity<TodoDto> getTodoById(@PathVariable String id);
+    @ApiOperation(
+            value = "Create a new Todo",
+            nickname = "createNewTodo",
+            notes = "Creates a new Todo item",
+            response = TodoDto.class)
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Boolean> deleteTodoById(@PathVariable String id);
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "To do created successfully", response = TodoDto.class),
+            @ApiResponse(code = 400, message = "Bad Request", response = SwaggerErrorResponseCode.class),
+            @ApiResponse(code = 401, message = "Unauthorized", response = SwaggerErrorResponseCode.class),
+            @ApiResponse(code = 403, message = "Forbidden", response = SwaggerErrorResponseCode.class),
+            @ApiResponse(code = 404, message = "No To do's has been found", response = SwaggerErrorResponseCode.class),
+            @ApiResponse(code = 405, message = "Method Not allowed", response = SwaggerErrorResponseCode.class),
+            @ApiResponse(code = 409, message = "Conflict", response = SwaggerErrorResponseCode.class),
+            @ApiResponse(code = 500, message = "Internal Server Error", response = SwaggerErrorResponseCode.class),
+            @ApiResponse(code = 503, message = "Can not reached remote URL", response = SwaggerErrorResponseCode.class)
+    })
 
-	@GetMapping("/completed")
-	public ResponseEntity<List<TodoDto>> findAllCompletedTodo();
+
+    @ApiParam(value = "To do details to be created", required = true)
+    @PostMapping
+    ResponseEntity<TodoDto> createTodo(@RequestBody TodoDto todoDto);
+
+    //TODO: swagger annotation and logic documentation will be addedd
+    @GetMapping("/{id}")
+    ResponseEntity<TodoDto> getTodoById(@PathVariable String id);
+
+    @DeleteMapping("/{id}")
+    ResponseEntity<TodoDto> deleteTodoById(@PathVariable String id);
+
+    @GetMapping("/completed")
+    ResponseEntity<List<TodoDto>> findAllCompletedTodo();
 
 }

@@ -52,5 +52,4 @@ public class LoggingAspect {
 			throw e;
 		}
 	}
-
 }

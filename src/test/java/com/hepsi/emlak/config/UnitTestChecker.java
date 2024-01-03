@@ -10,71 +10,89 @@ import java.util.List;
 
 public class UnitTestChecker {
 
-	public static void main(String[] args) throws IOException, ClassNotFoundException {
-		String packageName = "com.hepsiemlak";
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+        String packageName = "com.hepsiemlak";
 
-		List<Class<?>> classes = getClasses(packageName);
+        List<Class<?>> classes = getClasses(packageName);
 
-		for (Class<?> clazz : classes) {
-			if (!hasUnitTest(clazz)) {
-				System.out.println(clazz.getName() + " sınıfı unit test içermemektedir.");
-			}
-		}
-	}
+        for (Class<?> clazz : classes) {
+            if (!hasUnitTest(clazz)) {
+                System.out.println(clazz.getName() + " sınıfındaki aşağıda listelenmiş metodların unit testleri eksik.");
+            }
 
-	public static List<Class<?>> getClasses(String packageName) throws IOException, ClassNotFoundException {
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		String path = packageName.replace('.', '/');
-		Enumeration<URL> resources = classLoader.getResources(path);
-		List<File> dirs = new ArrayList<>();
+            List<Method> methodsWithoutUnitTest = getMethodsWithoutUnitTest(clazz);
+            for (Method method : methodsWithoutUnitTest) {
+                System.out.println("  -> " + method.getName() + " metodu unit test içermemektedir.");
+            }
+        }
+    }
 
-		while (resources.hasMoreElements()) {
-			URL resource = resources.nextElement();
-			dirs.add(new File(resource.getFile()));
-		}
+    public static List<Class<?>> getClasses(String packageName) throws IOException, ClassNotFoundException {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        String path = packageName.replace('.', '/');
+        Enumeration<URL> resources = classLoader.getResources(path);
+        List<File> dirs = new ArrayList<>();
 
-		List<Class<?>> classes = new ArrayList<>();
-		for (File directory : dirs) {
-			classes.addAll(findClasses(directory, packageName));
-		}
+        while (resources.hasMoreElements()) {
+            URL resource = resources.nextElement();
+            dirs.add(new File(resource.getFile()));
+        }
 
-		return classes;
-	}
+        List<Class<?>> classes = new ArrayList<>();
+        for (File directory : dirs) {
+            classes.addAll(findClasses(directory, packageName));
+        }
 
-	public static List<Class<?>> findClasses(File directory, String packageName) throws ClassNotFoundException {
-		List<Class<?>> classes = new ArrayList<>();
-		if (!directory.exists()) {
-			return classes;
-		}
+        return classes;
+    }
 
-		File[] files = directory.listFiles();
-		for (File file : files) {
-			if (file.isDirectory()) {
-				assert !file.getName().contains(".");
-				classes.addAll(findClasses(file, packageName + "." + file.getName()));
-			} else if (file.getName().endsWith(".class")) {
-				classes.add(
-						Class.forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
-			}
-		}
+    public static List<Method> getMethodsWithoutUnitTest(Class<?> clazz) {
+        List<Method> methodsWithoutUnitTest = new ArrayList<>();
+        Method[] methods = clazz.getDeclaredMethods();
 
-		return classes;
-	}
+        for (Method method : methods) {
+            if (!isUnitTest(method)) {
+                methodsWithoutUnitTest.add(method);
+            }
+        }
 
-	public static boolean hasUnitTest(Class<?> clazz) {
-		Method[] methods = clazz.getDeclaredMethods();
+        return methodsWithoutUnitTest;
+    }
 
-		for (Method method : methods) {
-			if (isUnitTest(method)) {
-				return true;
-			}
-		}
+    public static List<Class<?>> findClasses(File directory, String packageName) throws ClassNotFoundException {
+        List<Class<?>> classes = new ArrayList<>();
+        if (!directory.exists()) {
+            return classes;
+        }
 
-		return false;
-	}
+        File[] files = directory.listFiles();
+        for (File file : files) {
+            if (file.isDirectory()) {
+                assert !file.getName().contains(".");
+                classes.addAll(findClasses(file, packageName + "." + file.getName()));
+            } else if (file.getName().endsWith(".class")) {
+                classes.add(
+                        Class.forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
+            }
+        }
 
-	private static boolean isUnitTest(Method method) {
+        return classes;
+    }
 
-		return method.isAnnotationPresent(org.junit.Test.class);
-	}
+    public static boolean hasUnitTest(Class<?> clazz) {
+        Method[] methods = clazz.getDeclaredMethods();
+
+        for (Method method : methods) {
+            if (isUnitTest(method)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean isUnitTest(Method method) {
+
+        return method.isAnnotationPresent(org.junit.Test.class);
+    }
 }

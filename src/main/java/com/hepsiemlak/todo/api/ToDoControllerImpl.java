@@ -56,7 +56,7 @@ public class ToDoControllerImpl implements ToDoController {
 	}
 
 	@Override
-	public ResponseEntity<Boolean> deleteTodoById(String id) {
+	public ResponseEntity<TodoDto> deleteTodoById(String id) {
 
 		logger.info("Todo with ID {} deleted successfully.", id);
 

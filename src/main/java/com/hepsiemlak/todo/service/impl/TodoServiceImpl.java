@@ -23,107 +23,105 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TodoServiceImpl implements TodoService {
 
-	private static final Logger logger = LoggerFactory.getLogger(TodoServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(TodoServiceImpl.class);
 
-	private final TodoRepository todoRepository;
-	private final ModelMapper modelMapper;
+    private final TodoRepository todoRepository;
+    private final ModelMapper modelMapper;
 
-	@Override
-	public List<TodoDto> findAllTodos() {
+    @Override
+    public List<TodoDto> findAllTodos() {
 
-		List<Todo> todos = todoRepository.findAllByTodos();
+        List<Todo> todos = todoRepository.findAllByTodos();
 
-		if (todos.isEmpty()) {
+        if (todos.isEmpty()) {
 
-			logger.error("[TodoServiceImpl] (findAllTodos) : There are no to-do's.");
+            logger.error("[TodoServiceImpl] (findAllTodos) : There are no to-do's.");
 
-			throw new AllToDoNotFoundException();
-		}
+            throw new AllToDoNotFoundException();
+        }
 
-		List<TodoDto> taskDtos = todos.stream().map(task -> modelMapper.map(task, TodoDto.class))
-				.collect(Collectors.toList());
+        List<TodoDto> taskDtos = todos.stream().map(task -> modelMapper.map(task, TodoDto.class))
+                .collect(Collectors.toList());
 
-		logger.info("[TodoServiceImpl] (findAllTodos) Retrieved {} all todo's task successfully.", todos.size());
+        logger.info("[TodoServiceImpl] (findAllTodos) Retrieved {} all todo's task successfully.", todos.size());
 
-		return taskDtos;
-	}
+        return taskDtos;
+    }
 
-	// To-DO: @Transactional annotation needed to add however; have no idea for text
-	// based DB's
-	@Override
-	public TodoDto createTodo(TodoDto todoDto) {
+    // To-DO: @Transactional annotation needed to add however; have no idea for text
+    // based DB's
+    @Override
+    public TodoDto createTodo(TodoDto todoDto) {
 
-		Todo existingTodo = todoRepository.findByTodoTitleAndIsCompleted(todoDto.getTodoTitle(), todoDto.isCompleted());
+        Todo existingTodo = todoRepository.findByTodoTitleAndIsCompleted(todoDto.getTodoTitle(), todoDto.isCompleted());
 
-		if (existingTodo != null) {
+        if (existingTodo != null) {
 
-			logger.warn(
-					"[TodoServiceImpl] (createTodo) To Do already exists with the same content. ID: {}, taskTitle: {}, isCompleted: {}",
-					existingTodo.getId(), existingTodo.getTodoTitle(), existingTodo.isCompleted());
+            logger.warn(
+                    "[TodoServiceImpl] (createTodo) To Do already exists with the same content. ID: {}, taskTitle: {}, isCompleted: {}",
+                    existingTodo.getId(), existingTodo.getTodoTitle(), existingTodo.isCompleted());
 
-			throw new ToDoAlreadyExistException();
+            throw new ToDoAlreadyExistException();
 
-		}
+        }
 
-		Todo todo = modelMapper.map(todoDto, Todo.class);
+        Todo todo = modelMapper.map(todoDto, Todo.class);
 
-		Todo savedTodo = todoRepository.save(todo);
+        Todo savedTodo = todoRepository.save(todo);
 
-		logger.info("[TodoServiceImpl] (createTodo) New To Do created - id: {}, taskTitle: {}, isCompleted: {}",
-				savedTodo.getId(), savedTodo.getTodoTitle(), savedTodo.isCompleted());
+        logger.info("[TodoServiceImpl] (createTodo) New To Do created - id: {}, taskTitle: {}, isCompleted: {}",
+                savedTodo.getId(), savedTodo.getTodoTitle(), savedTodo.isCompleted());
 
-		return modelMapper.map(savedTodo, TodoDto.class);
-	}
+        return modelMapper.map(savedTodo, TodoDto.class);
+    }
 
-	@Override
-	public TodoDto getTodoById(String id) {
+    @Override
+    public TodoDto getTodoById(String id) {
 
-		logger.error("[TodoServiceImpl] (getTodoById) To Do not found with id: {}", id);
+        logger.error("[TodoServiceImpl] (getTodoById) To Do not found with id: {}", id);
 
-		Todo task = todoRepository.findById(id).orElseThrow(() -> new TodoNotFoundException(id));
+        Todo task = todoRepository.findById(id).orElseThrow(() -> new TodoNotFoundException(id));
 
-		logger.info("[TodoServiceImpl] (getTodoById) To Do found with ID: {}", id);
+        logger.info("[TodoServiceImpl] (getTodoById) To Do found with ID: {}", id);
 
-		return modelMapper.map(task, TodoDto.class);
-	}
+        return modelMapper.map(task, TodoDto.class);
+    }
 
-	@Override
-	public Boolean deleteTodo(String id) {
-		return todoRepository.findById(id).map(task -> {
+    @Override
+    public TodoDto deleteTodo(String id) {
+        return todoRepository.findById(id).map(task -> {
 
-			if (!task.isDeleted()) {
+            if (!task.isDeleted()) {
 
-				task.setDeleted(true);
+                task.setDeleted(true);
 
-				todoRepository.save(task);
+                todoRepository.save(task);
 
-				logger.info("[TodoServiceImpl] (deleteTodo) Todo with ID {} has deleted", id);
+                logger.info("[TodoServiceImpl] (deleteTodo) Todo with ID {} has been deleted", id);
 
-				return true;
+                return modelMapper.map(task, TodoDto.class);
 
-			} else {
+            } else {
 
-				logger.info("[TodoServiceImpl] (deleteTodo) Todo with ID {} is already deleted", id);
+                logger.info("[TodoServiceImpl] (deleteTodo) Todo with ID {} is already deleted", id);
 
-				return false;
-			}
+                return new TodoDto();
+            }
 
-		}).orElseThrow(() -> new TodoNotFoundException(id));
-	}
+        }).orElseThrow(() -> new TodoNotFoundException(id));
+    }
 
-	@Override
-	public List<TodoDto> findAllCompletedTodo() {
+    @Override
+    public List<TodoDto> findAllCompletedTodo() {
 
-		List<Todo> completedTodoDtos = todoRepository.findAllCompletedTodos();
+        List<Todo> completedTodoDtos = todoRepository.findAllCompletedTodos();
 
-		if (null == completedTodoDtos) {
+        if (null == completedTodoDtos) {
 
-			throw new CompletedTodoException();
-		}
+            throw new CompletedTodoException();
+        }
 
-		List<TodoDto> completedTodoDtosList = completedTodoDtos.stream()
-				.map(task -> modelMapper.map(task, TodoDto.class)).collect(Collectors.toList());
-
-		return completedTodoDtosList;
-	}
+        return completedTodoDtos.stream()
+                .map(task -> modelMapper.map(task, TodoDto.class)).collect(Collectors.toList());
+    }
 }

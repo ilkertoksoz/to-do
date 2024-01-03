@@ -6,13 +6,13 @@ import com.hepsiemlak.todo.dto.TodoDto;
 
 public interface TodoService {
 
-	List<TodoDto> findAllTodos();
+    List<TodoDto> findAllTodos();
 
-	TodoDto createTodo(TodoDto taskDto);
+    TodoDto createTodo(TodoDto taskDto);
 
-	TodoDto getTodoById(String id);
+    TodoDto getTodoById(String id);
 
-	Boolean deleteTodo(String id);
+    TodoDto deleteTodo(String id);
 
-	List<TodoDto> findAllCompletedTodo();
+    List<TodoDto> findAllCompletedTodo();
 }
