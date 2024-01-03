@@ -80,11 +80,11 @@ public class TodoServiceImpl implements TodoService {
 
         logger.error("[TodoServiceImpl] (getTodoById) To Do not found with id: {}", id);
 
-        Todo task = todoRepository.findById(id).orElseThrow(() -> new TodoNotFoundException(id));
+        Todo todo = todoRepository.findById(id).orElseThrow(() -> new TodoNotFoundException(id));
 
         logger.info("[TodoServiceImpl] (getTodoById) To Do found with ID: {}", id);
 
-        return modelMapper.map(task, TodoDto.class);
+        return modelMapper.map(todo, TodoDto.class);
     }
 
     @Override
