@@ -1,7 +1,6 @@
 package com.hepsiemlak.todo.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -25,46 +24,47 @@ import com.hepsiemlak.todo.service.impl.TodoServiceImpl;
 @ExtendWith(MockitoExtension.class)
 public class TodoServiceImplTest {
 
-	@InjectMocks
-	private TodoServiceImpl todoServiceImpl;
+    @InjectMocks
+    private TodoServiceImpl todoServiceImpl;
 
-	@Mock
-	private TodoRepository todoRepository;
+    @Mock
+    private TodoRepository todoRepository;
 
-	@Spy
-	private ModelMapper modelMapper;
+    private final ModelMapper modelMapper = new ModelMapper();
 
-	@BeforeEach
-	void setUp() {
+    @BeforeEach
+    void setUp() {
 
-		List<Todo> todos = new ArrayList<>();
+        todoServiceImpl = new TodoServiceImpl(todoRepository, modelMapper);
 
-		Todo todo = new Todo();
+        List<Todo> todos = new ArrayList<>();
 
-		todo.setCompleted(true);
-		todo.setId("1");
-		todo.setTodoTitle("title");
-		todos.add(todo);
+        Todo todo = new Todo();
 
-		when(todoRepository.findAllByTodos()).thenReturn(todos);
-	}
+        todo.setCompleted(true);
+        todo.setId("1");
+        todo.setTodoTitle("title");
+        todos.add(todo);
 
-	@Test
-	void testFindAllTodos() {
+        when(todoRepository.findAllByTodos()).thenReturn(todos);
+    }
 
-		List<TodoDto> todoDtos = todoServiceImpl.findAllTodos();
+    @Test
+    void testFindAllTodos() {
 
-		assertEquals(1, todoDtos.size());
-		assertEquals("1", todoDtos.get(0).getId());
-		assertEquals("title", todoDtos.get(0).getTodoTitle());
-		assertEquals(true, todoDtos.get(0).isCompleted());
-	}
+        List<TodoDto> todoDtos = todoServiceImpl.findAllTodos();
 
-	@Test
-	void testFindAllTodosWhenEmpty() {
+        assertEquals(1, todoDtos.size());
+        assertEquals("1", todoDtos.get(0).getId());
+        assertEquals("title", todoDtos.get(0).getTodoTitle());
+        assertTrue(todoDtos.get(0).isCompleted());
+    }
 
-		when(todoRepository.findAllByTodos()).thenReturn(new ArrayList<>());
+    @Test
+    void testFindAllTodosWhenEmpty() {
 
-		assertThrows(AllToDoNotFoundException.class, () -> todoServiceImpl.findAllTodos());
-	}
+        when(todoRepository.findAllByTodos()).thenReturn(new ArrayList<>());
+
+        assertThrows(AllToDoNotFoundException.class, () -> todoServiceImpl.findAllTodos());
+    }
 }

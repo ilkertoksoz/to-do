@@ -11,18 +11,21 @@ import java.util.List;
 public class UnitTestChecker {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        String packageName = "com.hepsiemlak";
+        String packageName = "com.hepsiemlak.todo.service.impl";
 
         List<Class<?>> classes = getClasses(packageName);
 
         for (Class<?> clazz : classes) {
-            if (!hasUnitTest(clazz)) {
-                System.out.println(clazz.getName() + " sınıfındaki aşağıda listelenmiş metodların unit testleri eksik.");
-            }
+            System.out.println("Class: " + clazz.getName());
 
             List<Method> methodsWithoutUnitTest = getMethodsWithoutUnitTest(clazz);
-            for (Method method : methodsWithoutUnitTest) {
-                System.out.println("  -> " + method.getName() + " metodu unit test içermemektedir.");
+            if (!methodsWithoutUnitTest.isEmpty()) {
+                System.out.println("  Methods without unit tests:");
+                for (Method method : methodsWithoutUnitTest) {
+                    System.out.println("    -> " + method.getName());
+                }
+            } else {
+                System.out.println("  All methods have unit tests.");
             }
         }
     }
@@ -68,31 +71,16 @@ public class UnitTestChecker {
         File[] files = directory.listFiles();
         for (File file : files) {
             if (file.isDirectory()) {
-                assert !file.getName().contains(".");
                 classes.addAll(findClasses(file, packageName + "." + file.getName()));
             } else if (file.getName().endsWith(".class")) {
-                classes.add(
-                        Class.forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
+                classes.add(Class.forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
             }
         }
 
         return classes;
     }
 
-    public static boolean hasUnitTest(Class<?> clazz) {
-        Method[] methods = clazz.getDeclaredMethods();
-
-        for (Method method : methods) {
-            if (isUnitTest(method)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static boolean isUnitTest(Method method) {
-
+    public static boolean isUnitTest(Method method) {
         return method.isAnnotationPresent(org.junit.Test.class);
     }
 }
