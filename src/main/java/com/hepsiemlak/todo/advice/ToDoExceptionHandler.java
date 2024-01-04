@@ -42,5 +42,4 @@ public class ToDoExceptionHandler {
 		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), ex.getMessage());
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
 	}
-
 }

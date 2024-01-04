@@ -1,13 +1,5 @@
 package com.hepsiemlak.todo.service.impl;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import com.hepsiemlak.todo.dto.TodoDto;
 import com.hepsiemlak.todo.entity.Todo;
 import com.hepsiemlak.todo.exception.AllToDoNotFoundException;
@@ -16,8 +8,14 @@ import com.hepsiemlak.todo.exception.ToDoAlreadyExistException;
 import com.hepsiemlak.todo.exception.TodoNotFoundException;
 import com.hepsiemlak.todo.repository.TodoRepository;
 import com.hepsiemlak.todo.service.TodoService;
-
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -122,6 +120,6 @@ public class TodoServiceImpl implements TodoService {
         }
 
         return completedTodoDtos.stream()
-                .map(task -> modelMapper.map(task, TodoDto.class)).collect(Collectors.toList());
+                .map(todo -> modelMapper.map(todo, TodoDto.class)).collect(Collectors.toList());
     }
 }

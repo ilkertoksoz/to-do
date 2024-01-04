@@ -29,11 +29,11 @@ public class ToDoControllerImpl implements ToDoController {
 	@Override
 	public ResponseEntity<List<TodoDto>> findAllTodos() {
 
-		List<TodoDto> todos = todoServiceImpl.findAllTodos();
+		List<TodoDto> todoDtoList = todoServiceImpl.findAllTodos();
 
-		logger.info("[TodoController] (findAllTodos) Retrieved {} all todo's task successfully.", todos.size());
+		logger.info("[TodoController] (findAllTodos) Retrieved {} all todo's task successfully.", todoDtoList.size());
 
-		return ResponseEntity.ok(todos);
+		return ResponseEntity.ok(todoDtoList);
 	}
 
 	@Override

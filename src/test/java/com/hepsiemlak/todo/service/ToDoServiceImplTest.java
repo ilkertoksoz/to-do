@@ -3,6 +3,7 @@ package com.hepsiemlak.todo.service;
 import com.hepsiemlak.todo.dto.TodoDto;
 import com.hepsiemlak.todo.entity.Todo;
 import com.hepsiemlak.todo.exception.AllToDoNotFoundException;
+import com.hepsiemlak.todo.exception.CompletedTodoException;
 import com.hepsiemlak.todo.exception.ToDoAlreadyExistException;
 import com.hepsiemlak.todo.exception.TodoNotFoundException;
 import com.hepsiemlak.todo.repository.TodoRepository;
@@ -21,6 +22,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,6 +40,12 @@ class TodoServiceImplTest {
     void setUp() {
 
         todoServiceImpl = new TodoServiceImpl(todoRepository, modelMapper);
+
+        when(todoRepository.findById("nonExistingTodoId")).thenReturn(Optional.empty());
+
+        assertThrows(TodoNotFoundException.class, () -> {
+            todoServiceImpl.getTodoById("nonExistingTodoId");
+        });
     }
 
     @Test
@@ -74,7 +82,7 @@ class TodoServiceImplTest {
     @Test
     void testFindAllTodos() {
 
-        List<Todo> todos = new ArrayList<>();
+        List<Todo> todoList = new ArrayList<>();
 
         Todo todo = new Todo();
 
@@ -83,16 +91,16 @@ class TodoServiceImplTest {
         todo.setTodoTitle("title");
         todo.setCompleted(true);
         todo.setDeleted(true);
-        todos.add(todo);
+        todoList.add(todo);
 
-        when(todoRepository.findAllByTodos()).thenReturn(todos);
+        when(todoRepository.findAllByTodos()).thenReturn(todoList);
 
-        List<TodoDto> todoDtos = todoServiceImpl.findAllTodos();
+        List<TodoDto> todoDtoList = todoServiceImpl.findAllTodos();
 
-        assertEquals(1, todoDtos.size());
-        assertEquals("1", todoDtos.get(0).getId());
-        assertEquals("title", todoDtos.get(0).getTodoTitle());
-        assertTrue(todoDtos.get(0).isCompleted());
+        assertEquals(1, todoDtoList.size());
+        assertEquals("1", todoDtoList.get(0).getId());
+        assertEquals("title", todoDtoList.get(0).getTodoTitle());
+        assertTrue(todoDtoList.get(0).isCompleted());
 
         when(todoRepository.findAllByTodos()).thenReturn(new ArrayList<>());
 
@@ -103,6 +111,7 @@ class TodoServiceImplTest {
     void testGetTodoById() {
 
         Todo todo = new Todo();
+
         todo.setId("1");
         todo.setTodoTitle("title");
         todo.setCompleted(false);
@@ -115,10 +124,66 @@ class TodoServiceImplTest {
         assertEquals(todo.getTodoTitle(), result.getTodoTitle());
         assertEquals(todo.isCompleted(), result.isCompleted());
 
-        when(todoRepository.findById("nonExistingTodoId")).thenReturn(Optional.empty());
 
-        assertThrows(TodoNotFoundException.class, () -> {
-            todoServiceImpl.getTodoById("nonExistingTodoId");
-        });
+    }
+
+    @Test
+    void testDeleteTodo() {
+
+        Todo todoNotDeleted = new Todo();
+
+        todoNotDeleted.setId("1");
+        todoNotDeleted.setTodoTitle("title");
+        todoNotDeleted.setCompleted(false);
+        todoNotDeleted.setDeleted(false);
+
+        Todo todoAlreadyDeleted = new Todo();
+
+        todoAlreadyDeleted.setId("2");
+        todoAlreadyDeleted.setTodoTitle("title");
+        todoAlreadyDeleted.setCompleted(false);
+        todoAlreadyDeleted.setDeleted(true);
+
+        when(todoRepository.findById(anyString()))
+                .thenReturn(Optional.of(todoNotDeleted))
+                .thenReturn(Optional.of(todoAlreadyDeleted));
+
+        when(todoRepository.save(any(Todo.class))).thenReturn(new Todo());
+
+        TodoDto resultNotDeleted = todoServiceImpl.deleteTodo("1");
+        TodoDto resultAlreadyDeleted = todoServiceImpl.deleteTodo("2");
+
+        assertTrue(resultNotDeleted.isDeleted());
+        assertFalse(resultAlreadyDeleted.isDeleted());
+    }
+
+    @Test
+    void testFindAllCompletedTodo() {
+
+        List<Todo> todoCompletedList = new ArrayList<>();
+
+        Todo completedTodo = new Todo();
+
+        completedTodo.setCompleted(true);
+        completedTodo.setId("1");
+        completedTodo.setTodoTitle("title");
+        completedTodo.setCompleted(true);
+        completedTodo.setDeleted(true);
+        todoCompletedList.add(completedTodo);
+
+        when(todoRepository.findAllCompletedTodos())
+                .thenReturn(todoCompletedList);
+
+        List<TodoDto> todoDtoList = todoServiceImpl.findAllCompletedTodo();
+
+        assertEquals(1, todoDtoList.size());
+        assertEquals("1", todoDtoList.get(0).getId());
+        assertEquals("title", todoDtoList.get(0).getTodoTitle());
+        assertTrue(todoDtoList.get(0).isCompleted());
+
+        when(todoRepository.findAllCompletedTodos()).thenReturn(null);
+
+        assertThrows(CompletedTodoException.class, () -> todoServiceImpl.findAllCompletedTodo());
+
     }
 }
