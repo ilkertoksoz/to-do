@@ -27,13 +27,10 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TodoServiceImplTest {
-
     @InjectMocks
     private TodoServiceImpl todoServiceImpl;
-
     @Mock
     private TodoRepository todoRepository;
-
     private final ModelMapper modelMapper = new ModelMapper();
 
     @BeforeEach
@@ -123,8 +120,6 @@ class TodoServiceImplTest {
         assertNotNull(result);
         assertEquals(todo.getTodoTitle(), result.getTodoTitle());
         assertEquals(todo.isCompleted(), result.isCompleted());
-
-
     }
 
     @Test
@@ -184,6 +179,5 @@ class TodoServiceImplTest {
         when(todoRepository.findAllCompletedTodos()).thenReturn(null);
 
         assertThrows(CompletedTodoException.class, () -> todoServiceImpl.findAllCompletedTodo());
-
     }
 }
