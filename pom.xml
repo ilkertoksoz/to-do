@@ -182,8 +182,6 @@
                 </executions>
             </plugin>
 
-
-
             <!-- Maven Surefire Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -76,9 +76,18 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public TodoDto getTodoById(String id) {
 
-        logger.error("[TodoServiceImpl] (getTodoById) To Do not found with id: {}", id);
 
-        Todo todo = todoRepository.findById(id).orElseThrow(() -> new TodoNotFoundException(id));
+      //  Todo todo = todoRepository.findById(id).orElseThrow(() -> new TodoNotFoundException(id));
+
+        Todo todo = todoRepository.findById(id).orElse(null);
+
+     //   logger.error("[TodoServiceImpl] (getTodoById) To Do not found with id: {}", id);
+
+
+        if (todo == null) {
+            logger.error("[TodoServiceImpl] (getTodoById) To Do not found with id: {}", id);
+            throw new TodoNotFoundException(id);
+        }
 
         logger.info("[TodoServiceImpl] (getTodoById) To Do found with ID: {}", id);
 

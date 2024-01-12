@@ -20,7 +20,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-@Api(value = ApiPaths.ToDoCtrl.CTRL, tags = {SwaggerConfig.HEPSI_EMLAK_TO_DO_SERVICE_TAG})
+@Api(value = ApiPaths.ToDoController.CTRL, tags = {SwaggerConfig.HEPSI_EMLAK_TO_DO_SERVICE_TAG})
 public interface ToDoController {
 
     @ApiOperation(

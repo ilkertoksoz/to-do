@@ -16,7 +16,7 @@ import java.util.List;
 
 @Validated
 @RestController
-@RequestMapping(ApiPaths.ToDoCtrl.CTRL)
+@RequestMapping(ApiPaths.ToDoController.CTRL)
 @RequiredArgsConstructor
 public class ToDoControllerImpl implements ToDoController {
 
